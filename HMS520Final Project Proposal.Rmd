@@ -1,0 +1,23 @@
+---
+title: "HMS 520 Final Project Proposal"
+author: "Allie Eastus, Steph Zimsen"
+date: "11/21/2021"
+output: html_document
+---
+Team members: Allie Eastus, Steph Zimsen (#anyone else?)
+
+
+#The format you choose
+Format will include creating a package or set of functions. (Also will likely include analyzing a dataset that uses data wrangling)
+
+#The overall goal of the project
+The goal of this project is to put together a set of functions to clean and standardize and validate finished extraction datasets from "by hand" sci-lit systematic review extractions.
+
+The IHME GBD team, Neglected Tropical Diseases, tends to have fairly sparse data. The biggest datasets have ~10k rows, and most are <3000 rows. 
+
+The medium-term plan is to turn the code into an interactive R-markdown notebook that takes in parameters, does the cleaning, and then cranks out upload-ready csv datasets along with an automated report documenting the cleaning which wa
+
+#Detailed plans and timeline
+Steph has a pile of usual-suspect errors and inconsistencies to check, written up as a text checklist. And Central Comp maintains an existing shared function to validate datasets for epi-database upload; I would call that shared function as a last step.
+
+
