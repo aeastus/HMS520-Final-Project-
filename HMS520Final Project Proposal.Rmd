@@ -1,23 +1,27 @@
 ---
 title: "HMS 520 Final Project Proposal"
-author: "Allie Eastus, Steph Zimsen"
+author: "Rose Bender, Allie Eastus, Steph Zimsen"
 date: "11/21/2021"
 output: html_document
 ---
-Team members: Allie Eastus, Steph Zimsen (#anyone else?)
+Team members: Rose Bender, Allie Eastus, Steph Zimsen
 
 
 #The format you choose
 Format will include creating a package or set of functions. (Also will likely include analyzing a dataset that uses data wrangling)
 
 #The overall goal of the project
-The goal of this project is to put together a set of functions to clean and standardize and validate finished extraction datasets from "by hand" sci-lit systematic review extractions.
+The goal of this project is to put together a set of functions to clean and standardize and validate finished extraction datasets from "by hand" sci-lit systematic review extractions. An additional goal is to incorporate automatic detection of potential outliers within a datset to aid in vetting.
 
-The IHME GBD team, Neglected Tropical Diseases, tends to have fairly sparse data. The biggest datasets have ~10k rows, and most are <3000 rows. 
+These functions will be designed for the use cases of the IHME GBD teams Neglected Tropical Diseases (NTDs) and HIV/TB/Select Infectious Diseases (HIV/TB/IDs). NTDs tends to have fairly sparse data: the biggest datasets have ~10k rows, and most are <3000 rows. HIV/TB/IDs has larger datasets which include clinical data, in the ~100k row range. The functions will use both `data.table` and `dplyr` for data wrangling.
 
-The medium-term plan is to turn the code into an interactive R-markdown notebook that takes in parameters, does the cleaning, and then cranks out upload-ready csv datasets along with an automated report documenting the cleaning which wa
+The medium-term plan is to turn the code into an interactive R-markdown notebook that takes in parameters, does the cleaning, and then cranks out upload-ready csv datasets along with an automated report documenting the cleaning which was done. 
 
 #Detailed plans and timeline
 Steph has a pile of usual-suspect errors and inconsistencies to check, written up as a text checklist. And Central Comp maintains an existing shared function to validate datasets for epi-database upload; I would call that shared function as a last step.
+Approximate timeline:
+Week 1. Compile function and feature "wishlist". Select test datasets. Define division of work and who will write which functions.
+Week 2. Work on / write functions.
+Week 3. Peer review of each others' functions, finalization.
 
 
