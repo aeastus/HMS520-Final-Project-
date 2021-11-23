@@ -1,27 +1,31 @@
 ---
 title: "HMS 520 Final Project Proposal"
 author: "Rose Bender, Allie Eastus, Steph Zimsen"
-date: "11/21/2021"
+date: "11/23/2021"
 output: html_document
 ---
 Team members: Rose Bender, Allie Eastus, Steph Zimsen
 
 
-#The format you choose
-Format will include creating a package or set of functions. (Also will likely include analyzing a dataset that uses data wrangling)
+## Format
+The format will include creating a package, or set of functions to build towards a package. (Also will likely include analyzing a dataset that uses data wrangling.)
 
-#The overall goal of the project
-The goal of this project is to put together a set of functions to clean and standardize and validate finished extraction datasets from "by hand" sci-lit systematic review extractions. An additional goal is to incorporate automatic detection of potential outliers within a datset to aid in vetting.
+## Overall goal of the project
+The goal of this project is to put together a set of functions to clean finished data extractions to prepare for upload or repair and re-upload. One side of the project is to clean and standardize and validate finished extraction datasets from "by hand" sci-lit systematic review extractions, or to detect and repair extraction errors from prior uploads. The other component is to incorporate automatic detection of potential outliers within a datset to aid in vetting.
 
 These functions will be designed for the use cases of the IHME GBD teams Neglected Tropical Diseases (NTDs) and HIV/TB/Select Infectious Diseases (HIV/TB/IDs). NTDs tends to have fairly sparse data: the biggest datasets have ~10k rows, and most are <3000 rows. HIV/TB/IDs has larger datasets which include clinical data, in the ~100k row range. The functions will use both `data.table` and `dplyr` for data wrangling.
 
-The medium-term plan is to turn the code into an interactive R-markdown notebook that takes in parameters, does the cleaning, and then cranks out upload-ready csv datasets along with an automated report documenting the cleaning which was done. 
+## Detailed plans and timeline
+NTDs extracts data largely from scientific lit and epi-surveillance periodicals. Errors and inconsistencies to check include: appropriate factor levels in categorical fields; conditional fields filled in as conditions call for; required fields are non-null and of appropriate data format or content. "Appropriate" values will be user-specifiable in the intro section that loads libriares, sources functions, and sets parameters. A draft of specific common errors and inconsistencies to test for has been written up as a text checklist. 
 
-#Detailed plans and timeline
-Steph has a pile of usual-suspect errors and inconsistencies to check, written up as a text checklist. And Central Comp maintains an existing shared function to validate datasets for epi-database upload; I would call that shared function as a last step.
-Approximate timeline:
-Week 1. Compile function and feature "wishlist". Select test datasets. Define division of work and who will write which functions.
-Week 2. Work on / write functions.
-Week 3. Peer review of each others' functions, finalization.
+Central Comp maintains an existing shared function to validate datasets for epi-database upload. That shared function would serve as a last step in the workflow for non-clinical data.
 
+HIV/TB/IDs gets data from similar sources, and from clinical data with different characteristics. Thus the cleaning requirements for already-extracted data will differ. The outlier-vetting code would produce graphs that show strongly atypical data points, for consideration as outliers.
 
+* Week 1. Compile function and feature "wishlist". Select test datasets. Define division of work and who will write which functions.
+* Week 2. Work on / write functions.
+* Week 3. Peer review of each others' functions.Finalization.
+
+A longer-term term plan following this work is to turn the systematic-review-cleaning code into an interactive R-markdown notebook that takes in parameters, does the cleaning, and produces upload-ready csv datasets, producing as well an automated report documenting the cleaning which was done. 
+
+##### end
