@@ -1,34 +1,27 @@
 ########################################################################################################################################################
-#' @Function name: validate_cause_data_function
+#' @ Function name: validate_cause_data_function
 #' @ Inputs: input_arg_names = list("unique_group", "severity", "pathogen_load",)
 #' input_arg_criteria = list(is.numerical(x, threshold = NA))
 #' @ Outputs: TRUE/FALSE
 ########################################################################################################################################################
+## Load packages
+pacman::p_load(data.table, openxlsx, validate)
 
-install.packages("validate")
-Copy_of_leprosy_extracted_Wkly_Epi_Rcrd_GBD2019_3_
+## Set up inputs
+dt <- as.data.table(read.xlsx(paste0("/ihme/homes/rbender1/leprosy_extracted_Wkly-Epi-Rcrd_GBD2019.xlsx")))
 
-#This sets up the criteria to validate the cause-specific columns (as specified in the inputs)
-validation_criteria <- validate(unique_group >= 0
-                                 , severity >= (G2DN < G2)
-                                 , pathogen_load >= 0)
-out <- confront(Copy_of_leprosy_extracted_Wkly_Epi_Rcrd_GBD2019_3_, validation_criteria)
-summary(out)
+# Sample validation criteria
+validation_criteria <- list('age_start >= 0',
+                            'pathogen_load %in% c("MB", "PB") | is.na(pathogen_load)',
+                            'severity %in% c("G2DN", "G<2D") | is.na(severity)')
 
-byvars <- c("unique_group", "severity", "pathogen_load")
-dt <- Copy_of_leprosy_extracted_Wkly_Epi_Rcrd_GBD2019_3_
-
-validation_check <- function(dt, byvars) {
-  dt[, num_rows := .N, by = byvars] 
-  if(any(dt$num_rows > 0)){
-    stop(paste("Review the cause-specific data for accuracy:", paste(which(dt$num_rows > 1), collapse = ", ")))
-  } else {
-    print("Cause-specfic validation confirmed!")
+validation_check <- function(dt, validation_criteria) {
+  for(v in validation_criteria){
+    dt[, meet_criteria := 0]
+    dt[eval(parse(text = v)), meet_criteria := 1]
+    if(any(dt$meet_criteria == 0)){
+      print(paste("You have", nrow(dt[meet_criteria == 0]), "observations that do not meet", v, "in these rows:", paste(which(dt$meet_criteria == 0), collapse = ", ")))
+    } 
   }
-  dt$num_rows <- NULL
   return(dt)
 }
-
-#if further extraction is desired for validation results continue - this will create df of just the validation criteria results
-df_out <- as.data.frame(out)
-
