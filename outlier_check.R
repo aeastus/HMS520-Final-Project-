@@ -9,9 +9,6 @@
 ########################################################################################################################################################
 rm(list=ls())
 
-## Source shared functions
-invisible(sapply(list.files("/share/cc_resources/libraries/current/r/", full.names = T), source))
-
 ## Load packages
 pacman::p_load(data.table, openxlsx, parallel, pbapply)
 

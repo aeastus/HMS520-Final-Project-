@@ -7,13 +7,8 @@
 #' @ Date Submitted: 2021-10-21
 #' @ Notes: 
 ########################################################################################################################################################
-rm(list=ls())
-
-## Source shared functions
-invisible(sapply(list.files("/share/cc_resources/libraries/current/r/", full.names = T), source))
-
 ## Load packages
-pacman::p_load(data.table, openxlsx, parallel, pbapply)
+pacman::p_load(data.table, openxlsx)
 
 ## Set up inputs
 byvars <- c("location_id", "sex", "year_start", "year_end", "nid", "case_name", "measure", "group", "specificity", "age_start", "age_end") # variables used to identify data-series
