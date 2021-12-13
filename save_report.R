@@ -4,26 +4,38 @@
 #' 
 #' @ Notes: : Final check across all functions for errors/missing data and other problems in the data set. 
 ########################################################################################################################################################
+## Load packages
+pacman::p_load(data.table, openxlsx, knitir)
 
 #Validation final check
 test_dt <- validation_check(dt, validation_criteria)
 all_rows_with_errors <-  rbindlist(test_dt[["error_rows"]])
+all_rows_with_errors <- all_rows_with_errors[!duplicated(all_rows_with_errors)]
 test_dt[["error_text"]]
 
 #duplicate final check 
-dt <- as.data.table(read.xlsx(paste0("/Users/allieeastus/Downloads/Copy of leprosy_extracted_Wkly-Epi-Rcrd_GBD2019 (3).xlsx")))
 test2_dt <- duplicate_check(dt, byvars)
 all_rows_with_errors <-  rbindlist(test2_dt[["error_rows"]])
+all_rows_with_errors <- all_rows_with_errors[!duplicated(all_rows_with_errors)]
 test2_dt[["error_text"]]
 
 #missing final check 
 test3_dt <- missing_check(dt, vars_check)
 all_rows_with_errors <-  rbindlist(test3_dt[["error_rows"]])
+all_rows_with_errors <- all_rows_with_errors[!duplicated(all_rows_with_errors)]
 test3_dt[["error_text"]]
 
 #outlier final check 
 test4_dt <- outlier_checkk(dt, byvars, release_id, n = 3, flag_zeros = TRUE)
 all_rows_with_errors <-  rbindlist(test4_dt[["error_rows"]])
+all_rows_with_errors <- all_rows_with_errors[!duplicated(all_rows_with_errors)]
 test4_dt[["error_text"]]
+
+#Write a report with the final check into PDF (also Rmarkdown option below)
+rmarkdown::render("save_report.R", "pdf_document")
+
+#Report --> Rmarkdown
+rmarkdown::render("save_report.R", "rmarkdown")
+
 
 
