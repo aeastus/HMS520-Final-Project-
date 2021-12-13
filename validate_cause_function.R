@@ -8,7 +8,7 @@
 pacman::p_load(data.table, openxlsx)
 
 ## Set up inputs
-dt <- as.data.table(read.xlsx(paste0("/ihme/homes/rbender1/leprosy_extracted_Wkly-Epi-Rcrd_GBD2019.xlsx")))
+dt <- as.data.table(read.xlsx(paste0("/Users/allieeastus/Downloads/Copy of leprosy_extracted_Wkly-Epi-Rcrd_GBD2019 (3).xlsx")))
 
 # Sample validation criteria
 validation_criteria <- list('age_start >= 0',
