@@ -3,7 +3,7 @@
 #' @ Purpose: Screen for potential missingness
 #' @ Inputs: dt = data table you are screening; vars_check = character vector of column names to check for missingness
 #' @ Outputs: A list with three elements: 
-#' dt = the data table you started with; error_rows = all rows flagged with errors; error_text = all error text that was printed
+#' dt = the data table you started with; error_rows = list of all rows flagged with errors; error_text = list of all error text that was printed
 #' @ Author: Rose Bender
 #' @ Date Submitted: 2021-12-14
 #' @ Notes: 
@@ -11,10 +11,8 @@
 ## Load packages
 pacman::p_load(data.table)
 
-## Set up inputs
+## Set up sample inputs
 dt <- as.data.table(read.xlsx(paste0("/ihme/homes/rbender1/leprosy_extracted_Wkly-Epi-Rcrd_GBD2019.xlsx")))
-
-## Sample vars to check
 vars_check <- c("age_start", "age_end", "sex")
 
 ## Helper function
