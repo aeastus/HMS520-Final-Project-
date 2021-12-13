@@ -4,7 +4,7 @@
 #' @ Inputs: dt = data table you are screening; validation_criteria = character vector of logical tests to apply to your variables
 #' Example: validation_criteria <- list('age_start >= 0','pathogen_load %in% c("MB", "PB") | is.na(pathogen_load)')
 #' @ Outputs: A list with three elements: 
-#' dt = the data table you started with; error_rows = all rows flagged with errors; error_text = all error text that was printed
+#' dt = the data table you started with; error_rows = list of all rows flagged with errors; error_text = list of all error text that was printed
 #' @ Author: Rose Bender & Allie Eastus
 #' @ Date Submitted: 2021-12-14
 #' @ Notes: 
@@ -12,10 +12,8 @@
 ## Load packages
 pacman::p_load(data.table, openxlsx)
 
-## Set up inputs
+## Set up sample inputs
 dt <- as.data.table(read.xlsx(paste0("/ihme/homes/rbender1/leprosy_extracted_Wkly-Epi-Rcrd_GBD2019.xlsx")))
-
-## Sample validation criteria
 validation_criteria <- list('age_start >= 0',
                             'pathogen_load %in% c("MB", "PB") | is.na(pathogen_load)',
                             'severity %in% c("G2DN", "G<2D") | is.na(severity)')
