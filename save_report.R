@@ -1,8 +1,9 @@
+########################################################################################################################################################
 #' @ Function name: save_report
 #' @ Purpose: master script - save output report based on other checks
 #' @ Inputs: dt = data table of data of interest, ages = data table of ages for outliering
 #' @ Outputs: RMarkdown file
-#' @ Notes: : Run check functions for errors/missing data and other problems in the data set. 
+#' @ Notes: Run check functions for errors/missing data and other problems in the data set; split dataset into specific bundle subsets.
 ########################################################################################################################################################
 ## Load packages
 pacman::p_load(data.table, openxlsx, readr, knitr, rmarkdown)
@@ -13,7 +14,14 @@ source(paste0(source_dir, '/duplicate_check.R'))
 source(paste0(source_dir, '/missing_check.R'))
 source(paste0(source_dir, '/validate_cause_function.R'))
 source(paste0(source_dir, '/outlier_check.R'))
-source(paste0(source_dir, '/bundle_split.R'))
+source(paste0(source_dir, '/bundle-split.R'))
+
+# ? bundle-split function seemed to try to run immediately upon sourcing -
+# it asked for the bundle_args up front - ?
+# so I jumped ahead and ran the bundle_args
+# and then went back to successfully source the script -- 
+#  which it then generated all the bundle-split output immediately. ???
+
 
 ## Read my inputs
 input_dir <- '~/'
@@ -50,6 +58,8 @@ list_of_outputs[["missing_list"]] <- missing_check(dt, vars_check)
 list_of_outputs[["duplicate_list"]] <- duplicate_check(dt, byvars)
 list_of_outputs[["validation_list"]] <- validation_check(dt, validation_criteria)
 list_of_outputs[["outlier_list"]] <- outlier_check(dt, byvars, ages)
+# TODO list_of_outputs[["bundle_list"]] <- bundle-split(output_list)
+## bundle-split output list not working -- don't understand syntax -- sorry!
 
 ## Validation final check
 print_outputs <- function(list){

@@ -3,8 +3,9 @@
 #' @ Purpose: Splits completed, cleaned extraction sheet into bundle-specific subset files ready to be uploaded to the research database
 #' @ Input datasets: csv-format result from previous data-cleaning scripts
 #' @ Input arguments: bundle_ids, variables containing conditional info to split, values forming splitting conditions
-#' @ Outputs: a list with three elements: 
-#' bundle_<bundle_id>.csv = subsetted csv file(s); success_text = list of all subsetted bundles saved, with their row count(s) and their filepath(s)
+#' @ Outputs: a list with two elements: 
+#'    1. bundle_<bundle_id>.csv = subsetted csv file(s); 
+#'    2. success_text = description of bundle-file(s) saved, with row count(s)
 #' @ Author: Steph Zimsen
 #' @ Date Submitted: 2021-12-15
 #' @ Notes: Function is a downstream component in workflow to prep extracted data for upload: clean and validate extracted data found in IHME-standard templated xlsm format, and subset into csv files which are ready to upload to IHME's epi-database.
@@ -60,7 +61,7 @@ for (i in 1:nrow(bundle_args)){
   # TODO`write_csv` statement works! but ...
   #    commenting it out bc no point saving it during testing
   
-  # write_csv(dt, file.path(sourcedir, 
+  # write_csv(dt, file.path(source_dir, 
   #                         paste0("bundle_", bundle_args[i,bundle_id],".csv")))
 } 
 
@@ -72,8 +73,8 @@ for (i in 1:nrow(bundle_args)){
 #   inside the for-loop! 
 # To set up this script to feed the `save_report` script,
 # try this:
-list(data = objects(pattern = "bundle_6"),
-     success_text = success_text)
+output_list <- list(data = objects(pattern = "bundle_6"),
+                    success_text = success_text)
 
 
 #####
