@@ -5,7 +5,7 @@
 #' @ Notes: : Run check functions for errors/missing data and other problems in the data set. 
 ########################################################################################################################################################
 ## Load packages
-pacman::p_load(data.table, openxlsx, knitr, rmarkdown)
+pacman::p_load(data.table, openxlsx, readr, knitr, rmarkdown)
 
 ## Source functions
 source_dir <- '~/00_repos/HMS520-Final-Project-/'
@@ -13,6 +13,7 @@ source(paste0(source_dir, '/duplicate_check.R'))
 source(paste0(source_dir, '/missing_check.R'))
 source(paste0(source_dir, '/validate_cause_function.R'))
 source(paste0(source_dir, '/outlier_check.R'))
+source(paste0(source_dir, '/bundle_split.R'))
 
 ## Read my inputs
 input_dir <- '~/'
@@ -29,6 +30,19 @@ validation_criteria <- list('age_start >= 0',
 byvars <- c("location_id", "sex", "year_start", "year_end", "nid", "case_name", "measure", "group", "specificity", "age_start", "age_end")
 # For missing_check
 vars_check <- c("age_start", "age_end", "sex")
+
+# For splitting bundles
+bundle_args <- data.table(
+  bundle_id = c("6362", "6359", "6365", "6638"),
+  bundle_name = c("leprosy_cases", "leprosy_cases_grade_2", 
+                  "leprosy_cure_rate", "leprosy_age_split"),
+  splitting_criteria = c('!is.na(nid)', 
+                         'severity == "G2DN"', 
+                         'measure == "remission"',
+                         'as.numeric(age_start) > 2 | as.numeric(age_end) < 80')
+)
+# (selecting all rows is operationalized by selecting rows with non-null NIDs)
+
 
 ## Run all checks
 list_of_outputs <- list()
