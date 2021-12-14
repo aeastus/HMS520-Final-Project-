@@ -11,10 +11,6 @@
 ## Load packages
 pacman::p_load(data.table, openxlsx)
 
-## Set up sample inputs
-dt <- as.data.table(read.xlsx(paste0("/ihme/homes/rbender1/leprosy_extracted_Wkly-Epi-Rcrd_GBD2019.xlsx")))
-byvars <- c("location_id", "sex", "year_start", "year_end", "nid", "case_name", "measure", "group", "specificity", "age_start", "age_end")
-
 duplicate_check <- function(dt, byvars){
   # Initialize outputs
   error_rows <- list()

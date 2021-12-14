@@ -12,12 +12,6 @@
 ## Load packages
 pacman::p_load(data.table, openxlsx)
 
-## Set up sample inputs
-dt <- as.data.table(read.xlsx(paste0("/ihme/homes/rbender1/leprosy_extracted_Wkly-Epi-Rcrd_GBD2019.xlsx")))
-validation_criteria <- list('age_start >= 0',
-                            'pathogen_load %in% c("MB", "PB") | is.na(pathogen_load)',
-                            'severity %in% c("G2DN", "G<2D") | is.na(severity)')
-
 validation_check <- function(dt, validation_criteria) {
   # Initialize outputs
   error_rows <- list()

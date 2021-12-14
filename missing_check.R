@@ -11,10 +11,6 @@
 ## Load packages
 pacman::p_load(data.table)
 
-## Set up sample inputs
-dt <- as.data.table(read.xlsx(paste0("/ihme/homes/rbender1/leprosy_extracted_Wkly-Epi-Rcrd_GBD2019.xlsx")))
-vars_check <- c("age_start", "age_end", "sex")
-
 ## Helper function
 whats_missing <- function(x){
   is.na(x) | is.null(x) | x == ""
