@@ -14,11 +14,7 @@
 pacman::p_load(data.table, openxlsx, parallel, pbapply)
 
 ## Set up inputs
-dt <- as.data.table(read.xlsx(paste0("/ihme/homes/rbender1/leprosy_extracted_Wkly-Epi-Rcrd_GBD2019.xlsx")))
-ages <- as.data.table(read.xlsx("/ihme/homes/rbender1/gbd_2020_ages.xlsx"))
-byvars <- c("location_id", "sex", "year_start", "year_end", "nid", "case_name", "measure", "group", "specificity")
-n <- 3 
-flag_zeros <- TRUE
+
 
 ## Helper Function
 find_closest <- function(number, vector){

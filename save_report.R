@@ -10,18 +10,13 @@ pacman::p_load(data.table, openxlsx, readr, knitr, rmarkdown)
 
 ## Source functions
 source_dir <- '~/00_repos/HMS520-Final-Project-/'
-source(paste0(source_dir, '/duplicate_check.R'))
-source(paste0(source_dir, '/missing_check.R'))
-source(paste0(source_dir, '/validate_cause_function.R'))
-source(paste0(source_dir, '/outlier_check.R'))
-source(paste0(source_dir, '/bundle-split.R'))
+functions <- c("duplicate_check.R", "missing_check.R", "validate_cause_function.R", "outlier_check.R", "bundle-split.R")
+invisible(sapply(paste0(source_dir, functions), source))
 
-# ? bundle-split function seemed to try to run immediately upon sourcing -
-# it asked for the bundle_args up front - ?
-# so I jumped ahead and ran the bundle_args
-# and then went back to successfully source the script -- 
-#  which it then generated all the bundle-split output immediately. ???
-
+## Set output directory
+output_root <- '~/HMS_tmp/'
+output_dir <- dir.create(paste0(output_dir, Sys.Date(), "/"))
+dir.create(output_dir)
 
 ## Read my inputs
 input_dir <- '~/'
@@ -30,15 +25,17 @@ dt <- dt[!nid %like% "Found in GHDx"]
 ages <- as.data.table(read.xlsx(paste0(input_dir, "gbd_2020_ages.xlsx")))
 
 ## Custom inputs
+# For missing_check
+vars_check <- c("age_start", "age_end", "sex")
+# For duplicate_check 
+byvars <- c("location_id", "sex", "year_start", "year_end", "nid", "case_name", "measure", "group", "specificity", "age_start", "age_end")
 # For validate_check
 validation_criteria <- list('age_start >= 0',
                             'pathogen_load %in% c("MB", "PB") | is.na(pathogen_load)',
                             'severity %in% c("G2DN", "G<2D") | is.na(severity)')
-# For duplicate_check 
-byvars <- c("location_id", "sex", "year_start", "year_end", "nid", "case_name", "measure", "group", "specificity", "age_start", "age_end")
-# For missing_check
-vars_check <- c("age_start", "age_end", "sex")
-
+# For outlier_check
+n <- 3 
+flag_zeros <- TRUE
 # For splitting bundles
 bundle_args <- data.table(
   bundle_id = c("6362", "6359", "6365", "6638"),
@@ -49,36 +46,25 @@ bundle_args <- data.table(
                          'measure == "remission"',
                          'as.numeric(age_start) > 2 | as.numeric(age_end) < 80')
 )
-# (selecting all rows is operationalized by selecting rows with non-null NIDs)
 
+## END USER-DEFINED INPUTS
 
 ## Run all checks
 list_of_outputs <- list()
 list_of_outputs[["missing_list"]] <- missing_check(dt, vars_check)
 list_of_outputs[["duplicate_list"]] <- duplicate_check(dt, byvars)
 list_of_outputs[["validation_list"]] <- validation_check(dt, validation_criteria)
-list_of_outputs[["outlier_list"]] <- outlier_check(dt, byvars, ages)
-# TODO list_of_outputs[["bundle_list"]] <- bundle-split(output_list)
-## bundle-split output list not working -- don't understand syntax -- sorry!
+list_of_outputs[["bundle_list"]] <- bundle_split(dt, bundle_args, output_dir)
 
 ## Validation final check
-print_outputs <- function(list){
-  all_rows_with_errors <-  rbindlist(list[["error_rows"]])
+save_outputs <- function(list, output_dir, name){
+  all_rows_with_errors <- rbindlist(list[["error_rows"]])
   all_rows_with_errors <- all_rows_with_errors[!duplicated(all_rows_with_errors)]
-  print(all_rows_with_errors)
+  if(nrow(all_rows_with_errors > 0)) write.xlsx(all_rows_with_errors, paste0(output_dir, name, ".xlsx"))
   error_text <- list[["error_text"]]
   cat(paste(error_text), sep = "\n")
-  return(list)
+  write.table(error_text, paste0(output_dir, name, ".txt"))
 }
 
-lapply(list_of_outputs, print_outputs)
-
-
-#Write a report with the final check into PDF (also Rmarkdown option below)
-rmarkdown::render(input = paste0(source_dir, "save_report.R"), output_format = "pdf_document", output_dir = input_dir)
-
-#Report --> Rmarkdown
-rmarkdown::render("save_report.R", "rmarkdown")
-
-
-
+mapply(save_outputs, list_of_outputs, names(list_of_outputs), MoreArgs = list(output_dir = output_dir))
+print(paste("Outputs are saved to", output_dir))
