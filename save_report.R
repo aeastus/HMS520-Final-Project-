@@ -5,7 +5,7 @@
 #' @ Notes: : Final check across all functions for errors/missing data and other problems in the data set. 
 ########################################################################################################################################################
 ## Load packages
-pacman::p_load(data.table, openxlsx, knitir)
+pacman::p_load(data.table, openxlsx, knitr)
 
 #Validation final check
 test_dt <- validation_check(dt, validation_criteria)
@@ -35,7 +35,7 @@ test4_dt[["error_text"]]
 rmarkdown::render("save_report.R", "pdf_document")
 
 #Report --> Rmarkdown
-rmarkdown::render("save_report.R", "rmarkdown")
+rmarkdown::render("save_report.R", "html")
 
 
 
