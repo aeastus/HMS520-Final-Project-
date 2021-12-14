@@ -10,7 +10,7 @@ pacman::p_load(data.table, openxlsx, readr, knitr, rmarkdown)
 
 ## Source functions
 source_dir <- '~/00_repos/HMS520-Final-Project-/'
-functions <- c("duplicate_check.R", "missing_check.R", "validate_cause_function.R", "outlier_check.R", "bundle-split.R", "write_outputs.R")
+functions <- c("duplicate_check.R", "missing_check.R", "validate_check.R", "outlier_check.R", "bundle_split.R", "write_outputs.R")
 invisible(sapply(paste0(source_dir, functions), source))
 
 ## Set output directory

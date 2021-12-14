@@ -19,8 +19,8 @@
 .xlsm
 .xls
 
-# MS-misc
-.pptx
+# output files created by compiling report
+.html
 
 # mac-OS & other e-dust bunnies
 .DS_Store
