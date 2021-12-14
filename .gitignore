@@ -1,1 +1,26 @@
-*.Rhistory
+# R
+# History & user files
+.Rhistory
+.Rapp.history
+.Ruserdata
+.Rproj.user/
+
+# R Environment Variables
+.Renviron
+
+# Temporary files created by R markdown
+*.utf8.md
+*.knit.md
+
+
+# MS-Office
+# spreadsheets
+.xlsx
+.xlsm
+.xls
+
+# MS-misc
+.pptx
+
+# mac-OS & other e-dust bunnies
+.DS_Store
