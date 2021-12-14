@@ -10,12 +10,12 @@ pacman::p_load(data.table, openxlsx, readr, knitr, rmarkdown)
 
 ## Source functions
 source_dir <- '~/00_repos/HMS520-Final-Project-/'
-functions <- c("duplicate_check.R", "missing_check.R", "validate_cause_function.R", "outlier_check.R", "bundle-split.R")
+functions <- c("duplicate_check.R", "missing_check.R", "validate_cause_function.R", "outlier_check.R", "bundle-split.R", "write_outputs.R")
 invisible(sapply(paste0(source_dir, functions), source))
 
 ## Set output directory
 output_root <- '~/HMS_tmp/'
-output_dir <- dir.create(paste0(output_dir, Sys.Date(), "/"))
+output_dir <- paste0(output_root, Sys.Date(), "/")
 dir.create(output_dir)
 
 ## Read my inputs
@@ -54,17 +54,12 @@ list_of_outputs <- list()
 list_of_outputs[["missing_list"]] <- missing_check(dt, vars_check)
 list_of_outputs[["duplicate_list"]] <- duplicate_check(dt, byvars)
 list_of_outputs[["validation_list"]] <- validation_check(dt, validation_criteria)
-list_of_outputs[["bundle_list"]] <- bundle_split(dt, bundle_args, output_dir)
 
-## Validation final check
-save_outputs <- function(list, output_dir, name){
-  all_rows_with_errors <- rbindlist(list[["error_rows"]])
-  all_rows_with_errors <- all_rows_with_errors[!duplicated(all_rows_with_errors)]
-  if(nrow(all_rows_with_errors > 0)) write.xlsx(all_rows_with_errors, paste0(output_dir, name, ".xlsx"))
-  error_text <- list[["error_text"]]
-  cat(paste(error_text), sep = "\n")
-  write.table(error_text, paste0(output_dir, name, ".txt"))
-}
-
-mapply(save_outputs, list_of_outputs, names(list_of_outputs), MoreArgs = list(output_dir = output_dir))
+## Write out the results of the checks
+invisible(mapply(write_outputs, list_of_outputs, names(list_of_outputs), MoreArgs = list(output_dir = output_dir)))
 print(paste("Outputs are saved to", output_dir))
+
+## Split the bundle 
+bundle_split_list <- bundle_split(dt, bundle_args, output_dir)
+
+## END

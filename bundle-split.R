@@ -26,12 +26,15 @@ split_child <- function(dt, splitting_criteria) {
 }
 
 ## Bundle splitting parent function 
-bundle_split <- function(dt, bundle_args){
+bundle_split <- function(dt, bundle_args, output_dir){
   # Apply the child funciton over each bundle you want to split
   split_list <- mapply(split_child, MoreArgs=list(dt = dt), splitting_criteria = bundle_args$splitting_criteria)
   # Initialize outputs
   error_text <- list()
   dt_list <- list()
+  # Create output directory
+  output_dir <- paste0(output_dir, "/split_bundles/")
+  dir.create(output_dir, showWarnings = FALSE)
   for (i in 1:nrow(bundle_args)){
     # Separate out each data table from the matrix output
     dt_tmp <- as.data.table(split_list[1:60,i])
@@ -39,7 +42,7 @@ bundle_split <- function(dt, bundle_args){
     # Write success message (still called error_text for use later)
     write_csv(dt, file.path(output_dir, paste0("bundle_", bundle_args[i,bundle_id],".csv")))
     error_text[[i]] <- paste("You have", nrow(dt_tmp), "observations in", bundle_args[i, bundle_name], "bundle as bundle_id =", bundle_args[i,bundle_id],
-                             "Results saved to", output_dir) 
+                             "Results saved to", output_dir)
     print(error_text[[i]])
   } 
   return(list(data = dt_list, error_text = error_text))
