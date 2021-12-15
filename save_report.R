@@ -1,65 +1,45 @@
 ########################################################################################################################################################
 #' @ Function name: save_report
-#' @ Purpose: master script - save output report based on other checks
-#' @ Inputs: dt = data table of data of interest, ages = data table of ages for outliering
-#' @ Outputs: RMarkdown file
-#' @ Notes: Run check functions for errors/missing data and other problems in the data set; split dataset into specific bundle subsets.
+#' @ Purpose: Parent script
+#'  Run check functions for errors/missing data and other problems in the data set; split dataset into specific bundle subsets.
+#'  Create output folder with reports showing what was done.
+#' @ Inputs: two CSVs with script configuration. see .README for more information
+#' check_args: csv with fields that define how to apply checks 
+#' split_args: csv with fields that define how to split the data into bundles or subsets
+#' @ Outputs: a folder in the specified output directory with .xlsx and .txt files showing results of data checks
+#' @ Notes:
 ########################################################################################################################################################
-## Load packages
-pacman::p_load(data.table, openxlsx, readr, knitr, rmarkdown)
+## Define code directory
+source_dir <- '~/00_repos/HMS520-Final-Project-/'
 
 ## Source functions
-source_dir <- '~/00_repos/HMS520-Final-Project-/'
 functions <- c("duplicate_check.R", "missing_check.R", "validate_check.R", "outlier_check.R", "bundle_split.R", "write_outputs.R")
 invisible(sapply(paste0(source_dir, functions), source))
 
-## Set output directory
-output_root <- '~/HMS_tmp/'
-output_dir <- paste0(output_root, Sys.Date(), "/")
-dir.create(output_dir)
+## Load packages
+pacman::p_load(data.table, openxlsx, readr, knitr, rmarkdown)
 
-## Read my inputs
-input_dir <- '~/'
-dt <- as.data.table(read.xlsx(paste0(input_dir, "leprosy_extracted_Wkly-Epi-Rcrd_GBD2019.xlsx")))
-dt <- dt[!nid %like% "Found in GHDx"]
-ages <- as.data.table(read.xlsx(paste0(input_dir, "gbd_2020_ages.xlsx")))
+## Read custom input config
+check_args <- readRDS(paste0(source_dir, "config.RDS"))
 
-## Custom inputs
-# For missing_check
-vars_check <- c("age_start", "age_end", "sex")
-# For duplicate_check 
-byvars <- c("location_id", "sex", "year_start", "year_end", "nid", "case_name", "measure", "group", "specificity", "age_start", "age_end")
-# For validate_check
-validation_criteria <- list('age_start >= 0',
-                            'pathogen_load %in% c("MB", "PB") | is.na(pathogen_load)',
-                            'severity %in% c("G2DN", "G<2D") | is.na(severity)')
-# For outlier_check
-n <- 3 
-flag_zeros <- TRUE
-# For splitting bundles
-bundle_args <- data.table(
-  bundle_id = c("6362", "6359", "6365", "6638"),
-  bundle_name = c("leprosy_cases", "leprosy_cases_grade_2", 
-                  "leprosy_cure_rate", "leprosy_age_split"),
-  splitting_criteria = c('!is.na(nid)', 
-                         'severity == "G2DN"', 
-                         'measure == "remission"',
-                         'as.numeric(age_start) > 2 | as.numeric(age_end) < 80')
-)
+## Load data
+dt <- as.data.table(read.xlsx(check_args$data_path))
+dt <- dt[!nid %like% "Found in GHDx"] # Drop description row
+ages <- as.data.table(read.xlsx(check_args$ages_path))
 
-## END USER-DEFINED INPUTS
+## END INPUTS
 
 ## Run all checks
 list_of_outputs <- list()
-list_of_outputs[["missing_list"]] <- missing_check(dt, vars_check)
-list_of_outputs[["duplicate_list"]] <- duplicate_check(dt, byvars)
-list_of_outputs[["validation_list"]] <- validation_check(dt, validation_criteria)
+list_of_outputs[["missing_list"]] <- missing_check(dt, check_args$vars_check)
+list_of_outputs[["duplicate_list"]] <- duplicate_check(dt, check_args$byvars)
+list_of_outputs[["validation_list"]] <- validation_check(dt, check_args$validation_criteria)
 
 ## Write out the results of the checks
-invisible(mapply(write_outputs, list_of_outputs, names(list_of_outputs), MoreArgs = list(output_dir = output_dir)))
-print(paste("Outputs are saved to", output_dir))
+invisible(mapply(write_outputs, list_of_outputs, names(list_of_outputs), MoreArgs = list(output_dir = check_args$output_dir)))
+print(paste("Outputs are saved to", check_args$output_dir))
 
 ## Split the bundle 
-bundle_split_list <- bundle_split(dt, bundle_args, output_dir)
+bundle_split_list <- bundle_split(dt = dt, bundle_args = check_args$bundle_args, output_dir = check_args$output_dir)
 
 ## END
