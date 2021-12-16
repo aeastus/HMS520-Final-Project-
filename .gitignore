@@ -12,13 +12,6 @@
 *.utf8.md
 *.knit.md
 
-
-# MS-Office
-# spreadsheets
-.xlsx
-.xlsm
-.xls
-
 # output files created by compiling report
 .html
 
