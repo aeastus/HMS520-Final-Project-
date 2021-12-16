@@ -14,6 +14,7 @@ write_outputs <- function(list, output_dir, name){
   all_rows_with_errors <- all_rows_with_errors[!duplicated(all_rows_with_errors)]
   if(nrow(all_rows_with_errors > 0)) write.xlsx(all_rows_with_errors, paste0(output_dir, name, ".xlsx"))
   error_text <- list[["error_text"]]
+  sink(paste0(output_dir, name, ".txt"))
   cat(paste(error_text), sep = "\n")
-  write.table(error_text, paste0(output_dir, name, ".txt"))
+  sink()
 }

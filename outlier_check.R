@@ -9,12 +9,11 @@
 #' @ Author: Rose Bender
 #' @ Date Submitted: 2021-12-14
 #' @ Notes: This function screens based on MAD of age-standardized points
+#' This function is a refactored version of a MAD outliering script from the YLDs team
+#' Courtesy of Lydia Haile for sharing: https://stash.ihme.washington.edu/projects/YLDRT/repos/msk/browse/functions/MAD_outliering.R 
 ########################################################################################################################################################
 ## Load packages
 pacman::p_load(data.table, openxlsx, parallel, pbapply)
-
-## Set up inputs
-
 
 ## Helper Function
 find_closest <- function(number, vector){
@@ -45,14 +44,17 @@ outlier_check <- function(dt, byvars, ages, n = 3, flag_zeros = TRUE){
   dt[, age_start := sapply(age_start, find_closest, vector = unique(ages$age_start))]
   dt[, age_end := sapply(age_end, find_closest, vector = unique(ages$age_end))]
   
-  # Sum the age weights across all age groups in the row
+  # Sum the age weights across all age groups in the row, for each unique age combination
   print("Calculating age weights for each row")
-  age_weights <- pblapply(1:nrow(dt), function(i){
+  dt_unique_ages <- unique(dt, by = c("age_start", "age_end"))
+  age_weights <- lapply(1:nrow(dt_unique_ages), function(i){
     # Pull age groups that are row i, and sum age_group_weight_value across age groups.
-    summed_row_weight <- sum(ages[age_start >= dt[i, age_start] & age_start < dt[i, age_end]]$age_group_weight_value)
-    return(summed_row_weight)
-  }, cl = 40)
-  dt[, age_group_weight_value := unlist(age_weights)]
+    summed_row_weight <- sum(ages[age_start >= dt_unique_ages[i, age_start] & age_start < dt_unique_ages[i, age_end]]$age_group_weight_value)
+    merge_weights <- data.table(age_start = dt_unique_ages[i, age_start], age_end = dt_unique_ages[i, age_end], age_group_weight_value = summed_row_weight)
+    return(merge_weights)
+  })
+  age_weights <- rbindlist(age_weights)
+  dt <- merge(dt, age_weights, by = c("age_start", "age_end"))
 
   # Create new age-weights for each data source
   byvars <- byvars[!byvars %in% c("age_start", "age_end")]
@@ -60,6 +62,7 @@ outlier_check <- function(dt, byvars, ages, n = 3, flag_zeros = TRUE){
   if(any(dt$sum > 1)){
     print("Your groups are not uniquely defined. Rerun duplicate_check, and check your byvars. Results from this function will NOT be reliable.")
   }
+  dt <- dt[sum <= 1]
   dt[, new_weight := age_group_weight_value/sum, by = byvars] #divide each age-group's standard weight by the sum of all the weights in their locaiton-age-sex-nid group
 
   # Age standardizing per location-year by sex
@@ -91,7 +94,7 @@ outlier_check <- function(dt, byvars, ages, n = 3, flag_zeros = TRUE){
   flagged_nids <- unique(dt[flag_outlier == 1]$nid)
   flagged_locs <- unique(dt[flag_outlier == 1]$ihme_loc_id)
   if(length(flagged_nids) == 0 & length(flagged_locs) == 0) {
-    error_text[["nid_location"]] <-"No NIDs or locations to check!"
+    error_text[["nid_location"]] <-"No NIDs or locations to check for potential outlier status!"
   } else {
     error_text[["nid_location"]] <- paste("NIDs to check:", paste(flagged_nids, collapse = ", "), "Locations to check:", paste(flagged_locs, collapse = ", "), sep = "\n")
   }

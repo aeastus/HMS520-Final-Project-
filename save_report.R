@@ -23,8 +23,9 @@ pacman::p_load(data.table, openxlsx, readr, knitr, rmarkdown)
 check_args <- readRDS(paste0(source_dir, "config.RDS"))
 
 ## Load data
-dt <- as.data.table(read.xlsx(check_args$data_path))
-dt <- dt[!nid %like% "Found in GHDx"] # Drop description row
+dt <- as.data.table(read.xlsx(check_args$data_path, startRow = 2)) # drop description row
+dt_headers <- as.data.table(read.xlsx(check_args$data_path, rows = 1, colNames = FALSE)) # read header names
+names(dt) <- as.character(dt_headers)
 ages <- as.data.table(read.xlsx(check_args$ages_path))
 
 ## END INPUTS
@@ -33,6 +34,7 @@ ages <- as.data.table(read.xlsx(check_args$ages_path))
 list_of_outputs <- list()
 list_of_outputs[["missing_list"]] <- missing_check(dt, check_args$vars_check)
 list_of_outputs[["duplicate_list"]] <- duplicate_check(dt, check_args$byvars)
+list_of_outputs[["outlier_list"]] <- outlier_check(dt, check_args$byvars, ages)
 list_of_outputs[["validation_list"]] <- validation_check(dt, check_args$validation_criteria)
 
 ## Write out the results of the checks
