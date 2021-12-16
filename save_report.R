@@ -11,6 +11,7 @@
 ########################################################################################################################################################
 ## Define code directory
 source_dir <- '~/00_repos/HMS520-Final-Project-/'
+config_dir <- '~/00_repos/HMS520-Final-Project-/'
 
 ## Source functions
 functions <- c("duplicate_check.R", "missing_check.R", "validate_check.R", "outlier_check.R", "bundle_split.R", "write_outputs.R")
@@ -20,7 +21,7 @@ invisible(sapply(paste0(source_dir, functions), source))
 pacman::p_load(data.table, openxlsx, readr, knitr, rmarkdown)
 
 ## Read custom input config
-check_args <- readRDS(paste0(source_dir, "config.RDS"))
+check_args <- readRDS(paste0(config_dir, "config.RDS"))
 
 ## Load data
 dt <- as.data.table(read.xlsx(check_args$data_path, startRow = 2)) # drop description row

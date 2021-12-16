@@ -7,6 +7,7 @@
 ########################################################################################################################################################
 ## Define code directory
 source_dir <- '~/00_repos/HMS520-Final-Project-/'
+config_dir <- '~/00_repos/HMS520-Final-Project-/'
 
 ## Define data input directory and filepaths
 data_path <- "~/leprosy_extracted_Wkly-Epi-Rcrd_GBD2019.xlsx"
@@ -50,6 +51,6 @@ saveRDS(list(source_dir = source_dir,
              n = n,
              flag_zeros = flag_zeros,
              bundle_args = bundle_args),
-        paste0(source_dir, "/config.RDS"))
+        paste0(config_dir, "/config.RDS"))
 
 ## END USER-DEFINED INPUTS
